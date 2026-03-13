@@ -1,73 +1,119 @@
 import { useState, useEffect } from 'react'
 import api from '../api/axios'
 
+const statusMeta = {
+  APPROVED:  { color: '#10b981', bg: 'rgba(16,185,129,0.08)',  border: 'rgba(16,185,129,0.2)'  },
+  REJECTED:  { color: '#ef4444', bg: 'rgba(239,68,68,0.08)',   border: 'rgba(239,68,68,0.2)'   },
+  WITHDRAWN: { color: '#6b7a96', bg: 'rgba(107,122,150,0.08)', border: 'rgba(107,122,150,0.2)' },
+  PENDING:   { color: '#f59e0b', bg: 'rgba(245,158,11,0.08)',  border: 'rgba(245,158,11,0.2)'  },
+}
+
+function StatusBadge({ status }) {
+  const m = statusMeta[status] || statusMeta.PENDING
+  return (
+    <span style={{
+      fontSize: 11, fontWeight: 600, padding: '3px 10px', borderRadius: 999,
+      color: m.color, background: m.bg, border: `1px solid ${m.border}`,
+      fontFamily: 'var(--mono)', letterSpacing: '0.04em',
+    }}>{status}</span>
+  )
+}
+
+function PageHeader({ title, subtitle }) {
+  return (
+    <div style={{ marginBottom: 28 }}>
+      <h1 style={{ fontSize: 22, fontWeight: 600, letterSpacing: '-0.02em', marginBottom: 4 }}>{title}</h1>
+      {subtitle && <p style={{ color: 'var(--muted)', fontSize: 14 }}>{subtitle}</p>}
+    </div>
+  )
+}
+
 export default function Dashboard() {
-  const [stats, setStats] = useState(null)
+  const [stats, setStats]     = useState(null)
   const [requests, setRequests] = useState([])
-  const user = JSON.parse(localStorage.getItem('user') || '{}')
+  const user    = JSON.parse(localStorage.getItem('user') || '{}')
   const isAdmin = user.role === 'COMPANY_ADMIN'
 
   useEffect(() => {
     if (isAdmin) {
-      api.get('/api/admin/stats').then(r => setStats(r.data))
-      api.get('/api/admin/requests').then(r => setRequests(r.data))
+      api.get('/api/admin/stats').then(r => setStats(r.data)).catch(() => {})
+      api.get('/api/admin/requests').then(r => setRequests(r.data)).catch(() => {})
     } else {
-      api.get('/api/requests/my').then(r => setRequests(r.data))
+      api.get('/api/requests/my').then(r => setRequests(r.data)).catch(() => {})
     }
   }, [])
 
-  const statusColor = (status) => {
-    if (status === 'APPROVED') return 'text-green-400'
-    if (status === 'REJECTED') return 'text-red-400'
-    if (status === 'WITHDRAWN') return 'text-gray-400'
-    return 'text-yellow-400'
-  }
+  const statCards = stats ? [
+    { label: 'Total',    value: stats.total,    color: 'var(--accent2)' },
+    { label: 'Pending',  value: stats.pending,  color: '#f59e0b' },
+    { label: 'Approved', value: stats.approved, color: '#10b981' },
+    { label: 'Rejected', value: stats.rejected, color: '#ef4444' },
+  ] : []
 
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-6">Dashboard</h2>
+      <PageHeader
+        title={isAdmin ? 'Overview' : 'My Dashboard'}
+        subtitle={isAdmin ? 'All activity across your organisation.' : `Welcome back, ${user.email}`}
+      />
 
-      {isAdmin && stats && (
-        <div className="grid grid-cols-4 gap-4 mb-8">
-          {[
-            { label: 'Total', value: stats.total, color: 'bg-blue-900 border-blue-700' },
-            { label: 'Pending', value: stats.pending, color: 'bg-yellow-900 border-yellow-700' },
-            { label: 'Approved', value: stats.approved, color: 'bg-green-900 border-green-700' },
-            { label: 'Rejected', value: stats.rejected, color: 'bg-red-900 border-red-700' },
-          ].map(s => (
-            <div key={s.label} className={`${s.color} border rounded-xl p-4`}>
-              <p className="text-gray-400 text-sm">{s.label}</p>
-              <p className="text-3xl font-bold mt-1">{s.value}</p>
+      {isAdmin && statCards.length > 0 && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 28 }}>
+          {statCards.map(s => (
+            <div key={s.label} style={{
+              background: 'var(--bg2)', border: '1px solid var(--border)',
+              borderRadius: 'var(--radius-lg)', padding: '20px 20px 16px',
+            }}>
+              <div style={{ fontSize: 12, color: 'var(--muted)', marginBottom: 8, fontWeight: 500 }}>{s.label}</div>
+              <div style={{ fontSize: 30, fontWeight: 600, color: s.color, fontFamily: 'var(--mono)', lineHeight: 1 }}>{s.value}</div>
             </div>
           ))}
         </div>
       )}
 
-      <div className="bg-gray-800 rounded-xl p-6">
-        <h3 className="text-lg font-semibold mb-4">
-          {isAdmin ? 'All Requests' : 'My Requests'}
-        </h3>
+      <div style={{
+        background: 'var(--bg2)', border: '1px solid var(--border)',
+        borderRadius: 'var(--radius-lg)', overflow: 'hidden',
+      }}>
+        <div style={{
+          padding: '16px 20px', borderBottom: '1px solid var(--border)',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        }}>
+          <span style={{ fontWeight: 600, fontSize: 14 }}>{isAdmin ? 'All requests' : 'My requests'}</span>
+          <span style={{ fontSize: 12, color: 'var(--muted)', fontFamily: 'var(--mono)' }}>{requests.length} total</span>
+        </div>
+
         {requests.length === 0 ? (
-          <p className="text-gray-400">No requests found.</p>
+          <div style={{ padding: '48px 20px', textAlign: 'center', color: 'var(--muted)', fontSize: 14 }}>
+            No requests yet.
+          </div>
         ) : (
-          <table className="w-full text-sm">
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
             <thead>
-              <tr className="text-gray-400 border-b border-gray-700">
-                <th className="text-left py-2">Title</th>
-                <th className="text-left py-2">Template</th>
-                {isAdmin && <th className="text-left py-2">Submitted By</th>}
-                <th className="text-left py-2">Status</th>
-                <th className="text-left py-2">Date</th>
+              <tr style={{ borderBottom: '1px solid var(--border)' }}>
+                {['Title', 'Template', isAdmin && 'Submitted by', 'Status', 'Date'].filter(Boolean).map(h => (
+                  <th key={h} style={{
+                    padding: '10px 20px', textAlign: 'left',
+                    fontSize: 11, fontWeight: 600, color: 'var(--muted)',
+                    letterSpacing: '0.06em', textTransform: 'uppercase',
+                  }}>{h}</th>
+                ))}
               </tr>
             </thead>
             <tbody>
-              {requests.map(r => (
-                <tr key={r.id} className="border-b border-gray-700 hover:bg-gray-700">
-                  <td className="py-3">{r.title}</td>
-                  <td className="py-3 text-gray-400">{r.templateName}</td>
-                  {isAdmin && <td className="py-3 text-gray-400">{r.submittedBy}</td>}
-                  <td className={`py-3 font-medium ${statusColor(r.status)}`}>{r.status}</td>
-                  <td className="py-3 text-gray-400">
+              {requests.map((r, i) => (
+                <tr key={r.id} style={{
+                  borderBottom: i < requests.length - 1 ? '1px solid var(--border)' : 'none',
+                  transition: 'background .1s',
+                }}
+                  onMouseOver={e => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'}
+                  onMouseOut={e => e.currentTarget.style.background = 'transparent'}
+                >
+                  <td style={{ padding: '12px 20px', fontWeight: 500 }}>{r.title}</td>
+                  <td style={{ padding: '12px 20px', color: 'var(--muted)' }}>{r.templateName}</td>
+                  {isAdmin && <td style={{ padding: '12px 20px', color: 'var(--muted)' }}>{r.submittedBy}</td>}
+                  <td style={{ padding: '12px 20px' }}><StatusBadge status={r.status} /></td>
+                  <td style={{ padding: '12px 20px', color: 'var(--muted)', fontFamily: 'var(--mono)', fontSize: 12 }}>
                     {new Date(r.createdAt).toLocaleDateString()}
                   </td>
                 </tr>

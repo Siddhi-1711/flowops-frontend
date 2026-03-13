@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import api from '../api/axios'
 
 export default function Login() {
@@ -70,6 +70,11 @@ export default function Login() {
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
+
+        <p className="text-gray-400 text-sm text-center mt-4">
+          Don't have an account?{' '}
+          <Link to="/register" className="text-blue-400 hover:text-blue-300">Create one</Link>
+        </p>
       </div>
     </div>
   )
