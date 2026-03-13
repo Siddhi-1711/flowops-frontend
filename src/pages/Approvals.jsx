@@ -46,7 +46,7 @@ export default function Approvals() {
       <div style={{ marginBottom: 28 }}>
         <h1 style={{ fontSize: 22, fontWeight: 600, letterSpacing: '-0.02em', marginBottom: 4 }}>Approvals</h1>
         <p style={{ color: 'var(--muted)', fontSize: 14 }}>
-          {pending.length === 0 ? 'You're all caught up.' : `${pending.length} request${pending.length > 1 ? 's' : ''} waiting for your decision.`}
+          {pending.length === 0 ? "You're all caught up." : `${pending.length} request${pending.length > 1 ? 's' : ''} waiting for your decision.`}
         </p>
       </div>
 
