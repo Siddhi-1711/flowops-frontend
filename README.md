@@ -1,16 +1,94 @@
-# React + Vite
+# FlowOps — Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React frontend for [FlowOps](https://github.com/Siddhi-1711/flowops), a multi-tenant workflow approval SaaS. Built with React 19, Vite, and a custom design system.
 
-Currently, two official plugins are available:
+**Live → [flowops-frontend.netlify.app](https://flowops-frontend.netlify.app)**
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## Demo Accounts
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+| Role | Email | Password |
+|------|-------|----------|
+| Company Admin | siddhi@acme.com | test1234 |
+| Approver | raj@test.com | test1234 |
+| Employee | priya@test.com | test1234 |
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Pages
+
+| Page | Role | Description |
+|------|------|-------------|
+| Landing | Public | Marketing page with feature overview |
+| Register | Public | Create a new company workspace |
+| Login | Public | Sign in to existing account |
+| Dashboard | All | Stats overview + request history |
+| Requests | All | Submit and track approval requests |
+| Approvals | Approver, Admin | Approve or reject pending requests |
+| Templates | Admin | Build multi-stage workflow templates |
+| Users | Admin | Manage team members and roles |
+
+---
+
+## Tech Stack
+
+- **React 19** + **Vite**
+- **React Router v7** — client-side routing with protected routes
+- **Axios** — HTTP client with JWT Bearer token interceptor
+- **DM Sans** — custom typography via Google Fonts
+- **CSS variables** — consistent design system (colors, spacing, radius)
+
+---
+
+## Project Structure
+
+```
+src/
+├── api/
+│   └── axios.js          Axios instance with baseURL from VITE_API_URL
+├── components/
+│   └── Layout.jsx         Sidebar + role-based nav + logout
+└── pages/
+    ├── Landing.jsx
+    ├── Login.jsx
+    ├── Register.jsx
+    ├── Dashboard.jsx
+    ├── Requests.jsx
+    ├── Approvals.jsx
+    ├── Templates.jsx
+    └── Users.jsx
+```
+
+---
+
+## Local Development
+
+```bash
+git clone https://github.com/Siddhi-1711/flowops-frontend.git
+cd flowops-frontend
+cp .env.example .env.local
+npm install
+npm run dev
+```
+
+Runs on `http://localhost:5173`. Make sure the backend is running on `http://localhost:8080`.
+
+### Environment Variables
+
+```env
+VITE_API_URL=http://localhost:8080
+```
+
+---
+
+## Backend
+
+This frontend connects to the [FlowOps Spring Boot backend](https://github.com/Siddhi-1711/flowops).
+
+---
+
+## Author
+
+**Siddhi Kunjir**
+- GitHub: [@Siddhi-1711](https://github.com/Siddhi-1711)
