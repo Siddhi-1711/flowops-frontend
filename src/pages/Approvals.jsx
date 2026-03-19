@@ -137,7 +137,7 @@ export default function Approvals() {
                 {/* Actions */}
                 <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
                   <button onClick={() => act(r.id, 'approve')} disabled={!!loading[r.id]} style={{
-                    padding: '8px 18px', border: 'none',
+                    padding: '8px 18px',
                     background: loading[r.id] === 'approve' ? 'var(--border2)' : 'rgba(16,185,129,0.12)',
                     border: '1px solid rgba(16,185,129,0.25)',
                     borderRadius: 'var(--radius)', color: '#10b981',
