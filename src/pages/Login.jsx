@@ -15,10 +15,7 @@ export default function Login() {
     try {
       const res = await api.post('/api/auth/login', form)
       localStorage.setItem('token', res.data.accessToken)
-      localStorage.setItem('user', JSON.stringify({
-        email: res.data.email,
-        role: res.data.role
-      }))
+      localStorage.setItem('user', JSON.stringify({ email: res.data.email, role: res.data.role }))
       navigate('/dashboard')
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed')
@@ -28,52 +25,73 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-      <div className="bg-gray-800 p-8 rounded-xl w-full max-w-md">
-        <h1 className="text-2xl font-bold text-blue-400 mb-2">FlowOps</h1>
-        <p className="text-gray-400 mb-6">Sign in to your account</p>
+    <div style={{
+      minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
+      background: 'var(--bg)', fontFamily: 'var(--font)', padding: '24px',
+    }}>
+      <div style={{ width: '100%', maxWidth: 400 }}>
+
+        {/* Logo */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 40 }}>
+          <div style={{
+            width: 34, height: 34, borderRadius: 9, background: 'var(--accent)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontWeight: 700, fontSize: 15, color: '#fff', fontFamily: 'var(--mono)',
+          }}>F</div>
+          <span style={{ fontWeight: 600, fontSize: 17, letterSpacing: '-0.02em' }}>FlowOps</span>
+        </div>
+
+        <h1 style={{ fontSize: 24, fontWeight: 600, letterSpacing: '-0.02em', marginBottom: 6 }}>Welcome back</h1>
+        <p style={{ color: 'var(--muted)', fontSize: 14, marginBottom: 32 }}>Sign in to your account to continue.</p>
 
         {error && (
-          <div className="bg-red-900 border border-red-700 text-red-300 px-4 py-3 rounded-lg mb-4 text-sm">
-            {error}
-          </div>
+          <div style={{
+            background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.25)',
+            borderRadius: 'var(--radius)', padding: '12px 16px',
+            color: '#fca5a5', fontSize: 14, marginBottom: 20,
+          }}>{error}</div>
         )}
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <div>
-            <label className="block text-sm text-gray-400 mb-1">Email</label>
-            <input
-              type="email"
-              value={form.email}
-              onChange={e => setForm({...form, email: e.target.value})}
-              className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500"
-              placeholder="you@company.com"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm text-gray-400 mb-1">Password</label>
-            <input
-              type="password"
-              value={form.password}
-              onChange={e => setForm({...form, password: e.target.value})}
-              className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500"
-              placeholder="••••••••"
-              required
-            />
-          </div>
-          <button
-            type="submit"
-            disabled={loading}
-            className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-900 text-white font-medium py-2 rounded-lg transition-colors"
-          >
-            {loading ? 'Signing in...' : 'Sign In'}
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          {[
+            { key: 'email', label: 'Email', type: 'email', placeholder: 'you@company.com' },
+            { key: 'password', label: 'Password', type: 'password', placeholder: '••••••••' },
+          ].map(f => (
+            <div key={f.key}>
+              <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: 'var(--muted)', marginBottom: 6 }}>{f.label}</label>
+              <input
+                type={f.type}
+                value={form[f.key]}
+                onChange={e => setForm({ ...form, [f.key]: e.target.value })}
+                placeholder={f.placeholder}
+                required
+                style={{
+                  width: '100%', padding: '10px 14px',
+                  background: 'var(--bg2)', border: '1px solid var(--border)',
+                  borderRadius: 'var(--radius)', color: 'var(--text)',
+                  fontSize: 14, fontFamily: 'var(--font)', outline: 'none',
+                  transition: 'border-color .15s',
+                }}
+                onFocus={e => e.target.style.borderColor = 'var(--accent)'}
+                onBlur={e => e.target.style.borderColor = 'var(--border)'}
+              />
+            </div>
+          ))}
+
+          <button type="submit" disabled={loading} style={{
+            padding: '11px', background: loading ? 'var(--border2)' : 'var(--accent)',
+            border: 'none', borderRadius: 'var(--radius)', color: '#fff',
+            fontSize: 14, fontFamily: 'var(--font)', fontWeight: 500,
+            cursor: loading ? 'not-allowed' : 'pointer', marginTop: 4,
+            transition: 'background .15s',
+          }}>
+            {loading ? 'Signing in…' : 'Sign in'}
           </button>
         </form>
 
-        <p className="text-gray-400 text-sm text-center mt-4">
+        <p style={{ textAlign: 'center', marginTop: 24, fontSize: 13, color: 'var(--muted)' }}>
           Don't have an account?{' '}
-          <Link to="/register" className="text-blue-400 hover:text-blue-300">Create one</Link>
+          <Link to="/register" style={{ color: 'var(--accent2)', textDecoration: 'none', fontWeight: 500 }}>Create one</Link>
         </p>
       </div>
     </div>
