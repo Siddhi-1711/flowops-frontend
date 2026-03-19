@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, Eye, EyeOff } from 'lucide-react'
 import api from '../api/axios'
 
 export default function Login() {
@@ -8,6 +8,7 @@ export default function Login() {
   const [form, setForm] = useState({ email: '', password: '' })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -160,42 +161,72 @@ export default function Login() {
             onSubmit={handleSubmit}
             style={{ display: 'flex', flexDirection: 'column', gap: 18 }}
           >
-            {[
-              {
-                key: 'email',
-                label: 'Email address',
-                type: 'email',
-                placeholder: 'you@company.com',
-              },
-              {
-                key: 'password',
-                label: 'Password',
-                type: 'password',
-                placeholder: 'Enter your password',
-              },
-            ].map((f) => (
-              <div key={f.key}>
-                <label
-                  style={{
-                    display: 'block',
-                    fontSize: 13,
-                    fontWeight: 600,
-                    color: 'var(--text)',
-                    marginBottom: 7,
-                  }}
-                >
-                  {f.label}
-                </label>
+            <div>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: 13,
+                  fontWeight: 600,
+                  color: 'var(--text)',
+                  marginBottom: 7,
+                }}
+              >
+                Email address
+              </label>
 
+              <input
+                type="email"
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                placeholder="you@company.com"
+                required
+                style={{
+                  width: '100%',
+                  padding: '12px 14px',
+                  background: 'var(--bg2)',
+                  border: '1px solid var(--border)',
+                  borderRadius: '14px',
+                  color: 'var(--text)',
+                  fontSize: 14,
+                  fontFamily: 'var(--font)',
+                  outline: 'none',
+                  transition: 'border-color 0.18s ease, box-shadow 0.18s ease',
+                  boxSizing: 'border-box',
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = 'var(--accent)'
+                  e.target.style.boxShadow = '0 0 0 4px rgba(99,102,241,0.10)'
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = 'var(--border)'
+                  e.target.style.boxShadow = 'none'
+                }}
+              />
+            </div>
+
+            <div>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: 13,
+                  fontWeight: 600,
+                  color: 'var(--text)',
+                  marginBottom: 7,
+                }}
+              >
+                Password
+              </label>
+
+              <div style={{ position: 'relative' }}>
                 <input
-                  type={f.type}
-                  value={form[f.key]}
-                  onChange={(e) => setForm({ ...form, [f.key]: e.target.value })}
-                  placeholder={f.placeholder}
+                  type={showPassword ? 'text' : 'password'}
+                  value={form.password}
+                  onChange={(e) => setForm({ ...form, password: e.target.value })}
+                  placeholder="Enter your password"
                   required
                   style={{
                     width: '100%',
-                    padding: '12px 14px',
+                    padding: '12px 42px 12px 14px',
                     background: 'var(--bg2)',
                     border: '1px solid var(--border)',
                     borderRadius: '14px',
@@ -215,8 +246,29 @@ export default function Login() {
                     e.target.style.boxShadow = 'none'
                   }}
                 />
+
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{
+                    position: 'absolute',
+                    right: 10,
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'transparent',
+                    border: 'none',
+                    cursor: 'pointer',
+                    color: 'var(--muted)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: 0,
+                  }}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
               </div>
-            ))}
+            </div>
 
             <button
               type="submit"
